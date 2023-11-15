@@ -3,12 +3,15 @@ import { useState } from "react";
 
 const ChatBar = () => {
   const [newQuestion, setNewQuestion] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmitChat = async (e) => {
     try {
       e.preventDefault();
 
       if (!newQuestion) return;
+
+      setIsLoading(true);
 
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
@@ -30,8 +33,14 @@ const ChatBar = () => {
       );
 
       console.log(response);
+
+      setNewQuestion("");
+
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
+
+      setIsLoading(false);
     }
   };
 
@@ -43,13 +52,13 @@ const ChatBar = () => {
           type="text"
           value={newQuestion}
           onChange={(e) => setNewQuestion(e.target.value)}
-          disabled={true}
+          disabled={isLoading}
         />
         <input
           className="w-28 py-[6px] text-sm bg-indigo-400 hover:bg-indigo-600 active:bg-indigo-400 rounded-lg text-white font-semibold"
           type="submit"
           value="검 색"
-          disabled={true}
+          disabled={isLoading}
         />
       </form>
     </div>
